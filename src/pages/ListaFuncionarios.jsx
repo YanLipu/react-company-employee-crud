@@ -2,12 +2,15 @@ import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Table from '../components/Table';
+import Modal from '../components/Timeline';
 import api from '@/api/api'
 
 
 export const ListaFuncionario = () => {
     const { user } = useContext(AuthContext);
     const [funcionarios, setFuncionarios] = useState([]);
+    const [funcionario, setFuncionario] = useState({});
+    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
     const tableColumns = [
@@ -55,6 +58,8 @@ export const ListaFuncionario = () => {
             icon: 'fas fa-user-alt',
             action: (row)=>{
                 console.log('exluir', row)
+                setFuncionario({...row})
+                handleButtonClick()
             }
         },
         {
@@ -80,6 +85,15 @@ export const ListaFuncionario = () => {
         });
     }
 
+    const handleButtonClick = () => {
+        setShowModal(true);
+      };
+    
+      const handleCloseModal = () => {
+        setShowModal(false);
+      };
+    
+
     useEffect(()=>{
         getFuncionarios()
     }, [])
@@ -91,6 +105,9 @@ export const ListaFuncionario = () => {
                 <Table data={funcionarios} items={tableColumns} actions={user.is_superuser && actions}>
                 </Table>
             </div>
+            {showModal && (
+                <Modal data={funcionario} onClose={handleCloseModal} />
+            )}
         </div>
     )
 }
